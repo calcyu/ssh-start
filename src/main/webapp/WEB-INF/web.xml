@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+	http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+    <display-name>ssh</display-name>
+
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+
+    <!-- spring配置文件位置 红色部分是整合hhibernate的 -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:spring/spring.xml,classpath:spring/spring-hibernate.xml</param-value>
+    </context-param>
+
+    <!-- openSessionInView配置 -->
+    <filter>
+        <filter-name>openSessionInViewFilter</filter-name>
+        <filter-class>org.springframework.orm.hibernate5.support.OpenSessionInViewFilter</filter-class>
+        <init-param>
+            <param-name>singleSession</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>openSessionInViewFilter</filter-name>
+        <url-pattern>*.action</url-pattern>
+    </filter-mapping>
+
+    <!-- Struts2的核心过滤器配置 -->
+    <filter>
+        <filter-name>struts2</filter-name>
+        <filter-class>org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter</filter-class>
+    </filter>
+    <!-- Struts2过滤器拦截所有的.action请求 -->
+    <filter-mapping>
+        <filter-name>struts2</filter-name>
+        <url-pattern>*.action</url-pattern>
+    </filter-mapping>
+
+    <!-- druid监控页面，使用${pageContext.request.contextPath}/druid/index.html访问 -->
+    <servlet>
+        <servlet-name>druidStatView</servlet-name>
+        <servlet-class>com.alibaba.druid.support.http.StatViewServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>druidStatView</servlet-name>
+        <url-pattern>/druid/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- spring监听器 当服务器启动时就会江spring上下文放到web容器中 整个项目就可以找到spring上下文 -->
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+    <!-- 防止spring内存溢出监听器 -->
+    <listener>
+        <listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class>
+    </listener>
+</web-app>
